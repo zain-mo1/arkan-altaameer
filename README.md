@@ -184,8 +184,16 @@ chunk. It also generates `sitemap.xml`, `robots.txt` and a `noindex` `404.html`;
 
 The site is fully static — deploy the `dist/` folder to any static host (Netlify, Vercel, Cloudflare Pages, GitHub
 Pages, S3 + CloudFront…). Clean URLs resolve to the generated HTML files, and unknown paths should fall back to
-`404.html` (the default on most hosts). Pre-rendering the pages (SSG) is a recommended next step to improve
-first paint on slow mobile connections.
+`404.html` (the default on most hosts).
+
+Every page has its own HTML file, so **no SPA fallback rewrite is needed** — and adding one (`/(.*)` →
+`/index.html`) would turn every mistyped link into a copy of the home page instead of a real 404.
+
+**Vercel:** import the repository and deploy — [`vercel.json`](vercel.json) sets the Vite preset, the `dist/` output
+directory and clean URLs, and caches the fingerprinted files in `dist/assets/` for a year, so no dashboard settings
+are needed.
+
+Pre-rendering the pages (SSG) is a recommended next step to improve first paint on slow mobile connections.
 
 ## Before launch
 
