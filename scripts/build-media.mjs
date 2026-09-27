@@ -102,10 +102,45 @@ async function processPhoto(key, cfg) {
 
 /* ---------------- brand assets ---------------- */
 
+/**
+ * Left-to-right arrangement of the horizontal lockup. The identity guide ships the Arabic order only (wordmark,
+ * then the symbol on the right); on English pages the symbol leads on the left. Both parts are moved unchanged,
+ * keeping the original spacing: the widest fully transparent column run is the space between them.
+ */
+async function lockupLtr(buffer) {
+  const { data, info } = await sharp(buffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width, height, channels } = info;
+  const blank = (x) => {
+    for (let y = 0; y < height; y++) if (data[(y * width + x) * channels + 3] > 8) return false;
+    return true;
+  };
+  let gap = { start: 0, size: 0 };
+  for (let x = 0, run = 0; x < width; x++) {
+    run = blank(x) ? run + 1 : 0;
+    if (run > gap.size) gap = { start: x - run + 1, size: run };
+  }
+  if (gap.size < width * 0.03) throw new Error('lockupLtr: no space found between the wordmark and the symbol');
+
+  const symbolX = gap.start + gap.size;
+  const wordmark = await sharp(buffer).extract({ left: 0, top: 0, width: gap.start, height }).toBuffer();
+  const symbol = await sharp(buffer)
+    .extract({ left: symbolX, top: 0, width: width - symbolX, height })
+    .toBuffer();
+  return sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite([
+      { input: symbol, left: 0, top: 0 },
+      { input: wordmark, left: width - gap.start, top: 0 },
+    ])
+    .png()
+    .toBuffer();
+}
+
 const BRAND = [
-  // [source, output, width]
+  // [source, output, width, transform?]
   ['lockup-on-dark.webp', 'lockup-on-dark.webp', 640],
   ['lockup-on-light.webp', 'lockup-on-light.webp', 640],
+  ['lockup-on-dark.webp', 'lockup-ltr-on-dark.webp', 640, lockupLtr],
+  ['lockup-on-light.webp', 'lockup-ltr-on-light.webp', 640, lockupLtr],
   ['logo-on-dark.webp', 'logo-on-dark.webp', 560],
   ['logo-on-light.webp', 'logo-on-light.webp', 560],
   ['symbol-on-dark.webp', 'symbol-on-dark.webp', 360],
@@ -114,11 +149,12 @@ const BRAND = [
 
 async function processBrand() {
   const dims = {};
-  for (const [srcName, outName, width] of BRAND) {
+  for (const [srcName, outName, width, transform] of BRAND) {
     const src = path.join(SRC_BRAND, srcName);
     const out = path.join(OUT_BRAND, outName);
     // trim transparent padding so layout sizing is exact
-    const trimmed = await sharp(src).trim({ threshold: 1 }).toBuffer();
+    let trimmed = await sharp(src).trim({ threshold: 1 }).toBuffer();
+    if (transform) trimmed = await transform(trimmed);
     const img = sharp(trimmed).resize({ width, withoutEnlargement: true });
     if (!isFresh(out, src)) await img.clone().webp({ quality: 90, alphaQuality: 100, effort: 6 }).toFile(out);
     const m = await sharp(await img.clone().toBuffer()).metadata();

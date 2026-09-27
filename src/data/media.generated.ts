@@ -551,6 +551,14 @@ export const brandAssets = {
     "w": 640,
     "h": 117
   },
+  "lockup-ltr-on-dark": {
+    "w": 640,
+    "h": 117
+  },
+  "lockup-ltr-on-light": {
+    "w": 640,
+    "h": 117
+  },
   "logo-on-dark": {
     "w": 560,
     "h": 487

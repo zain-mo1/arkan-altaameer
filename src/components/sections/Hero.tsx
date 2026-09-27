@@ -57,11 +57,35 @@ const fade: Variants = {
 };
 
 /**
+ * Calls to action are drawn in from the reading edge, like the gold seam, once the copy has settled — and
+ * leave the way they came, retracting into that edge.
+ */
+type Draw = { delay: number; from: string };
+const SHOWN = 'inset(0% 0% 0% 0%)';
+const draw: Variants = {
+  hidden: ({ from }: Draw) => ({ opacity: 0, clipPath: from }),
+  in: ({ delay, from }: Draw) => ({
+    opacity: [0, 1],
+    clipPath: [from, SHOWN],
+    transition: {
+      opacity: { duration: 0.3, ease: 'linear', delay: ENTER_DELAY + delay },
+      clipPath: { duration: 0.85, ease: EASE_CURTAIN, delay: ENTER_DELAY + delay },
+    },
+    // an unclipped button keeps its focus ring
+    transitionEnd: { clipPath: 'none' },
+  }),
+  out: ({ from }: Draw) => ({ opacity: 0, clipPath: from, transition: { duration: 0.4, ease: EASE_CURTAIN } }),
+};
+
+/**
  * One slide's copy. All four stay mounted in the same grid cell, so the hero always has the height of the
  * longest slide and never jumps; only the active one is visible and reachable (the others are inert).
  */
 function SlideCopy({ service, active }: { service: Service; active: boolean }) {
-  const { t, pick, path } = useLang();
+  const { t, lang, pick, path } = useLang();
+  const reduce = useReducedMotion();
+  // the wipe starts at the reading edge: the right in Arabic, the left in English
+  const from = reduce ? SHOWN : lang === 'ar' ? 'inset(0% 0% 0% 100%)' : 'inset(0% 100% 0% 0%)';
   let n = 0;
 
   return (
@@ -112,12 +136,42 @@ function SlideCopy({ service, active }: { service: Service; active: boolean }) {
           {t.services.more}
         </TextLink>
       </m.div>
+
+      {/* calls to action belong to the slide: they leave with its copy and point to its service */}
+      <div className="mt-8 flex flex-wrap items-center gap-2 sm:gap-4 [@media(min-height:880px)]:sm:mt-10">
+        <m.div className="flex" variants={draw} custom={{ delay: 0.5, from }}>
+          <Button
+            size="lg"
+            className="max-sm:gap-2 max-sm:px-4"
+            icon={<ArrowIcon />}
+            to={`${path(pages.quote.path)}?service=${service.id}`}
+          >
+            {/* short labels on phones keep both buttons on one row */}
+            <span className="sm:hidden">{t.cta.quoteShort}</span>
+            <span className="hidden sm:inline">{t.cta.quote}</span>
+          </Button>
+        </m.div>
+        <m.div className="flex" variants={draw} custom={{ delay: 0.62, from }}>
+          <Button
+            size="lg"
+            variant="outline"
+            className="max-sm:gap-2 max-sm:px-4"
+            href={waLink(t.wa.service(pick(service.title)))}
+            target="_blank"
+            rel="noopener noreferrer"
+            leadingIcon={<WhatsAppIcon />}
+          >
+            <span className="sm:hidden">{t.cta.whatsappShort}</span>
+            <span className="hidden sm:inline">{t.cta.whatsapp}</span>
+          </Button>
+        </m.div>
+      </div>
     </m.div>
   );
 }
 
 export function Hero() {
-  const { t, lang, pick, path } = useLang();
+  const { t, lang, pick } = useLang();
   const goTo = useGoToSection();
   const reduce = useReducedMotion();
 
@@ -143,7 +197,6 @@ export function Hero() {
     setActive(i);
     setCycle((c) => c + 1);
   };
-  const current = services[active];
   const pause = { onMouseEnter: () => setHovering(true), onMouseLeave: () => setHovering(false) };
 
   // Content drifts up and fades as the hero scrolls away
@@ -234,32 +287,6 @@ export function Hero() {
             <SlideCopy key={s.id} service={s} active={i === active} />
           ))}
         </div>
-
-        {/* calls to action follow the slide on screen */}
-        <m.div className="mt-8 flex flex-wrap items-center gap-2 sm:gap-4 [@media(min-height:880px)]:sm:mt-10" {...intro(0.95)} {...pause}>
-          <Button
-            size="lg"
-            className="max-sm:gap-2 max-sm:px-4"
-            icon={<ArrowIcon />}
-            to={`${path(pages.quote.path)}?service=${current.id}`}
-          >
-            {/* short labels on phones keep both buttons on one row */}
-            <span className="sm:hidden">{t.cta.quoteShort}</span>
-            <span className="hidden sm:inline">{t.cta.quote}</span>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="max-sm:gap-2 max-sm:px-4"
-            href={waLink(t.wa.service(pick(current.title)))}
-            target="_blank"
-            rel="noopener noreferrer"
-            leadingIcon={<WhatsAppIcon />}
-          >
-            <span className="sm:hidden">{t.cta.whatsappShort}</span>
-            <span className="hidden sm:inline">{t.cta.whatsapp}</span>
-          </Button>
-        </m.div>
 
         {/* scroll cue */}
         <m.button

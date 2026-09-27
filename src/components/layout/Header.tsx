@@ -43,7 +43,7 @@ function MenuButton({ open, onClick, label }: { open: boolean; onClick: () => vo
 }
 
 export function Header() {
-  const { t, home, path, pick } = useLang();
+  const { t, lang, home, path, pick } = useLang();
   const page = usePage();
   const goTo = useGoToSection();
   const waMessage = usePageWhatsAppMessage();
@@ -98,8 +98,9 @@ export function Header() {
             }}
             className="shrink-0"
           >
+            {/* the symbol leads in the reading direction: on the right in Arabic, on the left in English */}
             <img
-              src={publicUrl('brand/lockup-on-dark.webp')}
+              src={publicUrl(lang === 'ar' ? 'brand/lockup-on-dark.webp' : 'brand/lockup-ltr-on-dark.webp')}
               width={640}
               height={117}
               alt={pick(site.name)}
