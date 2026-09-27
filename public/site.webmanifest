@@ -1,0 +1,14 @@
+{
+  "name": "Arkan Altaameer United Co. — شركة أركان التعمير المتحدة",
+  "short_name": "Arkan",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#10141A",
+  "background_color": "#10141A",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ar" dir="rtl" style="background: #10141a">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script>
+      // Resolve language/direction before first paint: /en/* → English (LTR), otherwise Arabic (RTL).
+      (function () {
+        var en = /^\/en(\/|$)/.test(location.pathname);
+        document.documentElement.lang = en ? 'en' : 'ar';
+        document.documentElement.dir = en ? 'ltr' : 'rtl';
+      })();
+    </script>
+    <!-- arkan:head:start -->
+    <!-- arkan:head:end -->
+    <!-- arkan:fonts -->
+    <meta name="theme-color" content="#10141A" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <!-- per-page LCP image + page chunk preloads (vite.config.ts) -->
+    <!-- arkan:preload -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="font-family: system-ui, sans-serif; color: #ece9e3; padding: 2rem; text-align: center">
+        شركة أركان التعمير المتحدة — يرجى تفعيل JavaScript لعرض الموقع.<br />
+        Arkan Altaameer United Co. — please enable JavaScript to view this website.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

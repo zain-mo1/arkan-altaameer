@@ -1,0 +1,8 @@
+dist
+node_modules
+public
+assets
+src/data/media.generated.ts
+*.html.bak
+arkan-brand-identity*.html
+.artifact

@@ -1,0 +1,406 @@
+@import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
+
+/* ==========================================================================
+   ARKAN — Design tokens
+   Palette & type follow the approved brand identity guide:
+   Gold #D4AF37 · Graphite #1F2937 · Gray #6B7280 · Off-white #F5F5F5
+   Alexandria (Arabic display) · IBM Plex Sans Arabic (Arabic text) · Montserrat (Latin)
+   ========================================================================== */
+
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Metallic gold — accent only */
+  --color-gold: #d4af37;
+  --color-gold-light: #ebd28a;
+  --color-gold-dark: #9a7727;
+  --color-bronze: #7a5c1c;
+
+  /* Graphite family */
+  --color-graphite: #1f2937;
+  --color-graphite-deep: #161b23;
+  --color-graphite-deeper: #10141a;
+  --color-night: #0b0e12;
+
+  /* Neutrals */
+  --color-stone: #ece9e3;
+  --color-paper: #f5f5f5;
+  --color-ivory: #fbfaf7;
+  --color-steel: #6b7280;
+  --color-mist: #aab1bc;
+  --color-haze: #c9ced6;
+  --color-slate: #4a5260;
+
+  --color-whatsapp: #25d366;
+
+  /* Form errors — an earthy brick red that sits with the palette (and stays legible on paper) */
+  --color-danger: #a3342a;
+  --color-danger-light: #f2a79c;
+
+  --font-display: var(--arkan-font-display);
+  --font-body: var(--arkan-font-body);
+  --font-latin: 'Montserrat Variable', 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  /* Arabic snippets on English pages (e.g. the bilingual signature line) */
+  --font-arabic: 'Alexandria Variable', 'Alexandria', 'IBM Plex Sans Arabic', Tahoma, sans-serif;
+
+  --ease-brand: cubic-bezier(0.2, 0.7, 0.15, 1);
+  --ease-curtain: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --animate-wa-pulse: wa-pulse 2.8s var(--ease-brand) infinite;
+  --animate-scroll-cue: scroll-cue 2.4s var(--ease-curtain) infinite;
+
+  @keyframes wa-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    70%,
+    100% {
+      transform: scale(1.75);
+      opacity: 0;
+    }
+  }
+  @keyframes scroll-cue {
+    0% {
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    45% {
+      transform: scaleY(1);
+      transform-origin: top;
+    }
+    55% {
+      transform: scaleY(1);
+      transform-origin: bottom;
+    }
+    100% {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
+  }
+}
+
+@keyframes hero-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Reading direction as a number: multiply horizontal offsets by var(--dir) */
+:root {
+  --dir: 1;
+}
+:root[dir='rtl'] {
+  --dir: -1;
+}
+
+/* --------------------------------------------------------------------------
+   Language-aware typography
+   Arabic never receives letter-spacing (it breaks joined letterforms).
+   -------------------------------------------------------------------------- */
+:root:lang(ar) {
+  /* self-hosted family names first, Google Fonts names second (used by the static preview build) */
+  --arkan-font-display: 'Alexandria Variable', 'Alexandria', 'IBM Plex Sans Arabic', Tahoma, sans-serif;
+  --arkan-font-body: 'IBM Plex Sans Arabic', 'Alexandria Variable', 'Alexandria', Tahoma, sans-serif;
+
+  /* width- and height-aware so short laptop screens keep the service title block in view.
+     Medium white line + light gold accent line: presence without weight. */
+  --t-hero: clamp(2.25rem, min(1.2rem + 3.5vw, 8.2svh), 4.25rem);
+  --t-hero-lh: 1.32;
+  --t-hero-w: 500;
+  --t-hero-accent-w: 300;
+  --t-hero-ls: 0;
+
+  --t-display: clamp(2.5rem, 1.4rem + 4.2vw, 5.4rem);
+  --t-display-lh: 1.18;
+  --t-display-w: 700;
+  --t-display-ls: 0;
+
+  --t-h2: clamp(2.15rem, 1.35rem + 2.9vw, 4.25rem);
+  --t-h2-lh: 1.24;
+  --t-h2-w: 600;
+  --t-h2-ls: 0;
+
+  --t-h3: clamp(1.45rem, 1.15rem + 1vw, 2.15rem);
+  --t-h3-lh: 1.4;
+  --t-h3-w: 500;
+  --t-h3-ls: 0;
+
+  --t-h4: clamp(1.2rem, 1.08rem + 0.45vw, 1.5rem);
+  --t-h4-lh: 1.5;
+  --t-h4-w: 500;
+  --t-h4-ls: 0;
+
+  --t-lead: clamp(1.1rem, 1.02rem + 0.35vw, 1.32rem);
+  --t-lead-lh: 1.95;
+  --t-body: 1.0625rem;
+  --t-body-lh: 1.95;
+}
+
+:root:lang(en) {
+  --arkan-font-display: 'Montserrat Variable', 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --arkan-font-body: 'Montserrat Variable', 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+
+  --t-hero: clamp(2rem, min(1rem + 3.4vw, 8svh), 4.1rem);
+  --t-hero-lh: 1.08;
+  --t-hero-w: 500;
+  --t-hero-accent-w: 300;
+  --t-hero-ls: -0.025em;
+
+  --t-display: clamp(2.4rem, 1.2rem + 4.3vw, 5.2rem);
+  --t-display-lh: 1.05;
+  --t-display-w: 500;
+  --t-display-ls: -0.03em;
+
+  --t-h2: clamp(2rem, 1.2rem + 2.65vw, 3.6rem);
+  --t-h2-lh: 1.08;
+  --t-h2-w: 500;
+  --t-h2-ls: -0.028em;
+
+  --t-h3: clamp(1.35rem, 1.1rem + 0.9vw, 1.95rem);
+  --t-h3-lh: 1.22;
+  --t-h3-w: 500;
+  --t-h3-ls: -0.015em;
+
+  --t-h4: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
+  --t-h4-lh: 1.35;
+  --t-h4-w: 600;
+  --t-h4-ls: -0.01em;
+
+  --t-lead: clamp(1.04rem, 0.98rem + 0.3vw, 1.22rem);
+  --t-lead-lh: 1.75;
+  --t-body: 1rem;
+  --t-body-lh: 1.78;
+}
+
+@utility type-hero {
+  font-family: var(--arkan-font-display);
+  font-size: var(--t-hero);
+  line-height: var(--t-hero-lh);
+  font-weight: var(--t-hero-w);
+  letter-spacing: var(--t-hero-ls);
+}
+@utility type-display {
+  font-family: var(--arkan-font-display);
+  font-size: var(--t-display);
+  line-height: var(--t-display-lh);
+  font-weight: var(--t-display-w);
+  letter-spacing: var(--t-display-ls);
+}
+@utility type-h2 {
+  font-family: var(--arkan-font-display);
+  font-size: var(--t-h2);
+  line-height: var(--t-h2-lh);
+  font-weight: var(--t-h2-w);
+  letter-spacing: var(--t-h2-ls);
+}
+@utility type-h3 {
+  font-family: var(--arkan-font-display);
+  font-size: var(--t-h3);
+  line-height: var(--t-h3-lh);
+  font-weight: var(--t-h3-w);
+  letter-spacing: var(--t-h3-ls);
+}
+@utility type-h4 {
+  font-family: var(--arkan-font-display);
+  font-size: var(--t-h4);
+  line-height: var(--t-h4-lh);
+  font-weight: var(--t-h4-w);
+  letter-spacing: var(--t-h4-ls);
+}
+@utility type-lead {
+  font-size: var(--t-lead);
+  line-height: var(--t-lead-lh);
+}
+@utility type-body {
+  font-size: var(--t-body);
+  line-height: var(--t-body-lh);
+}
+
+/* Tracked Latin label — the brand's "drawing sheet" caption style */
+@utility label-latin {
+  font-family: var(--font-latin);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  direction: ltr;
+  unicode-bidi: isolate;
+  /* as a block it would otherwise left-align inside Arabic (RTL) layouts */
+  width: fit-content;
+}
+
+/* Latin numerals & codes (01, P—02 …) */
+@utility numerals {
+  font-family: var(--font-latin);
+  font-variant-numeric: tabular-nums lining-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
+  width: fit-content;
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+@utility shell {
+  width: 100%;
+  max-width: 92rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 0.6rem + 3.4vw, 4.5rem);
+}
+@utility section-y {
+  padding-block: clamp(5.5rem, 3rem + 8vw, 10.5rem);
+}
+@utility section-t {
+  padding-top: clamp(5.5rem, 3rem + 8vw, 10.5rem);
+}
+@utility section-b {
+  padding-bottom: clamp(5.5rem, 3rem + 8vw, 10.5rem);
+}
+
+/* --------------------------------------------------------------------------
+   Architectural textures (from the identity guide: drafting grid + grain)
+   -------------------------------------------------------------------------- */
+@utility draft-grid {
+  background-image:
+    linear-gradient(rgb(212 175 55 / 0.07) 1px, transparent 1px), linear-gradient(90deg, rgb(212 175 55 / 0.07) 1px, transparent 1px),
+    linear-gradient(rgb(212 175 55 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(212 175 55 / 0.035) 1px, transparent 1px);
+  background-size:
+    240px 240px,
+    240px 240px,
+    48px 48px,
+    48px 48px;
+  background-position: -1px -1px;
+}
+@utility draft-grid-light {
+  background-image:
+    linear-gradient(rgb(31 41 55 / 0.07) 1px, transparent 1px), linear-gradient(90deg, rgb(31 41 55 / 0.07) 1px, transparent 1px),
+    linear-gradient(rgb(31 41 55 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(31 41 55 / 0.035) 1px, transparent 1px);
+  background-size:
+    240px 240px,
+    240px 240px,
+    48px 48px,
+    48px 48px;
+  background-position: -1px -1px;
+}
+@utility fade-mask {
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, #000 25%, transparent 78%);
+}
+@utility fade-mask-end {
+  mask-image: linear-gradient(to left, #000 0%, transparent 70%);
+  [dir='rtl'] & {
+    mask-image: linear-gradient(to right, #000 0%, transparent 70%);
+  }
+}
+@utility grain {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+}
+
+/* Text gradient used on giant decorative words */
+@utility gold-text {
+  background: linear-gradient(100deg, #9a7727 0%, #f0d994 42%, #d4af37 62%, #8e6d22 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility outline-text {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px currentColor;
+}
+
+/* Word-mask used by <RevealHeading>; padded so Arabic ascenders/descenders are never clipped */
+@utility reveal-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0.12em 0.08em 0.22em;
+  margin: -0.12em -0.08em -0.22em;
+}
+
+@utility hero-progress-run {
+  animation-name: hero-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+/* Ground, colour scheme and type are unlayered on purpose: a host page's own reset (e.g. an embedded
+   preview) is unlayered too and would otherwise beat anything inside @layer base. */
+:root {
+  color-scheme: dark;
+  background: var(--color-graphite-deeper);
+  color: var(--color-graphite);
+  font-family: var(--arkan-font-body);
+}
+body {
+  margin: 0;
+  min-height: 100svh;
+  overflow-x: clip;
+  background: var(--color-graphite-deeper);
+  font-family: var(--arkan-font-body);
+  font-size: var(--t-body);
+  line-height: var(--t-body-lh);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+  ::selection {
+    background: rgb(212 175 55 / 0.9);
+    color: var(--color-graphite-deeper);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+  img {
+    -webkit-user-drag: none;
+  }
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+  /* Keep phone numbers / e-mails LTR inside Arabic text */
+  bdi,
+  .ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
