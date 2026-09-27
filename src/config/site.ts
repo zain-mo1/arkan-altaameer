@@ -7,8 +7,11 @@
  * Optional facts left as `null` are simply not rendered — never fill them with guesses.
  */
 export const site = {
-  /** Production origin, no trailing slash. TODO: real domain */
-  url: 'https://www.example.com',
+  /**
+   * Production origin, no trailing slash — canonical URLs, link previews, sitemap and JSON-LD are built on it.
+   * TODO: switch to the company domain once it is connected on Vercel.
+   */
+  url: 'https://arkan-altaameer.vercel.app',
 
   name: { ar: 'شركة أركان التعمير المتحدة', en: 'Arkan Altaameer United Co.' },
   shortName: { ar: 'أركان التعمير المتحدة', en: 'Arkan Altaameer' },

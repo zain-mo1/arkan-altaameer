@@ -17,6 +17,8 @@ Arabic (RTL) and English (LTR) · premium architectural design · built for spee
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-13-0055FF?logo=framer&logoColor=white)
 
+**[Live site](https://arkan-altaameer.vercel.app)** · [English version](https://arkan-altaameer.vercel.app/en/)
+
 </div>
 
 ![Home page — Arabic](docs/screenshots/home-ar.webp)
@@ -157,6 +159,7 @@ Source photos live in `assets/photos/<key>.jpg` and are registered in
 [`scripts/media.config.mjs`](scripts/media.config.mjs) with a responsive preset, an optional crop and a focal point.
 `npm run media` writes the responsive files to `public/media/` and a typed manifest to
 `src/data/media.generated.ts`; components then use `<Picture id="<key>" … />`, and a mistyped key is a type error.
+It also renders the link-preview cards in `public/og/` from the photos listed in `SHARE_CARDS`.
 
 **Adding a project:** add `assets/photos/prj-<name>.jpg`, register it in `scripts/media.config.mjs`, run
 `npm run media`, then add an entry to `src/data/projects.ts`.
@@ -180,6 +183,10 @@ alternates (Arabic, English, `x-default`) and Open Graph tags, and preloads that
 chunk. It also generates `sitemap.xml`, `robots.txt` and a `noindex` `404.html`; the home page carries JSON-LD
 (`GeneralContractor`). Client-side navigation keeps the same tags in sync.
 
+**Link previews:** when a page is shared on WhatsApp, LinkedIn, X or Facebook, the preview shows that page's own
+card (its hero photo, a gold frame and the logo, 1200 × 630) with its title and description. Pages without a hero
+photo use the home card, and the build fails if a card is missing.
+
 ## Deployment
 
 The site is fully static — deploy the `dist/` folder to any static host (Netlify, Vercel, Cloudflare Pages, GitHub
@@ -197,7 +204,8 @@ Pre-rendering the pages (SSG) is a recommended next step to improve first paint 
 
 ## Before launch
 
-- [ ] Set the production domain in `src/config/site.ts` (currently `https://www.example.com`).
+- [ ] Connect the company domain on Vercel and set it as `url` in `src/config/site.ts` (currently
+      `https://arkan-altaameer.vercel.app`).
 - [ ] Add the company e-mail, social media profiles, office address and, optionally, working hours and a map embed.
 - [ ] Replace the sample projects in `src/data/projects.ts` with the company's real projects and photography.
 - [ ] Replace the placeholder photography in `assets/photos/` and re-run `npm run media`.

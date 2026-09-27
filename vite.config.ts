@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
-import { locales, meta, notFoundMeta, PAGE_KEYS, pages, type PageKey } from './src/config/pages.ts';
+import { locales, meta, notFoundMeta, PAGE_KEYS, pages, shareImage, type PageKey } from './src/config/pages.ts';
 import { site } from './src/config/site.ts';
 import { media } from './src/data/media.generated.ts';
 import { stripLang, withLang } from './src/i18n/paths.ts';
@@ -49,7 +49,7 @@ function jsonLd(lang: Lang) {
     description: meta.home[lang].description,
     url: url(lang, 'home'),
     logo: abs('/brand/logo-on-light.webp'),
-    image: abs('/og-image.jpg'),
+    image: abs(shareImage('home')),
     telephone: site.contact.phone,
     email: site.contact.email,
     address: { '@type': 'PostalAddress', addressLocality: 'Riyadh', addressRegion: 'Riyadh Province', addressCountry: 'SA' },
@@ -79,12 +79,17 @@ function headBlock(lang: Lang, page: PageKey | null): string {
     `<meta property="og:title" content="${esc(m.title)}" />`,
     `<meta property="og:description" content="${esc(m.description)}" />`,
     ...(page ? [`<meta property="og:url" content="${url(lang, page)}" />`] : []),
-    `<meta property="og:image" content="${abs('/og-image.jpg')}" />`,
+    `<meta property="og:image" content="${abs(shareImage(page))}" />`,
+    `<meta property="og:image:type" content="image/jpeg" />`,
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,
+    `<meta property="og:image:alt" content="${esc(`${site.name[lang]} — ${site.tagline[lang]}`)}" />`,
     `<meta property="og:locale" content="${locales[lang]}" />`,
     `<meta property="og:locale:alternate" content="${locales[other]}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${esc(m.title)}" />`,
+    `<meta name="twitter:description" content="${esc(m.description)}" />`,
+    `<meta name="twitter:image" content="${abs(shareImage(page))}" />`,
   );
   if (page === 'home') tags.push(`<script type="application/ld+json">${JSON.stringify(jsonLd(lang))}</script>`);
   return ['<!-- arkan:head:start -->', ...tags, '<!-- arkan:head:end -->'].join('\n    ');
@@ -197,6 +202,10 @@ function arkanSite(): Plugin[] {
           }
         }
         fs.writeFileSync(path.join(outDir, '404.html'), render(base, 'ar', null, extras));
+
+        // every page must have its link-preview card (npm run media → public/og/)
+        const missing = PAGE_KEYS.map(shareImage).filter((p) => !fs.existsSync(path.join(outDir, p)));
+        if (missing.length) this.error(`Missing link-preview cards: ${[...new Set(missing)].join(', ')} — run npm run media`);
       },
     },
   ];

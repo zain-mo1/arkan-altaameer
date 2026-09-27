@@ -79,3 +79,17 @@ export const PHOTOS = {
   // Services page — stretch-ceiling detail (portrait frame)
   'svc-ceiling-2': { preset: 'large', crop: { ratio: 4 / 5, focal: [60, 45] }, focal: [55, 45] },
 };
+
+/**
+ * Link-preview cards (Open Graph, 1200×630) → public/og/<page>.jpg, one per page with a hero photo.
+ * Keep in sync with the hero images in src/config/pages.ts — the build fails if a page's card is missing;
+ * pages without a hero photo share the home card.
+ */
+export const SHARE_CARDS = {
+  home: 'hero-contracting',
+  about: 'page-about',
+  services: 'page-services',
+  projects: 'page-projects',
+  faq: 'page-faq',
+  contact: 'page-contact',
+};

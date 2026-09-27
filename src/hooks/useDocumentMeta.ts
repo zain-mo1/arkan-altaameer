@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react';
-import { locales, meta, notFoundMeta, pages, type PageKey } from '@/config/pages';
+import { locales, meta, notFoundMeta, pages, shareImage, type PageKey } from '@/config/pages';
 import { site } from '@/config/site';
 import { useLang } from '@/i18n/context';
 import { withLang } from '@/i18n/paths';
@@ -43,6 +43,10 @@ export function useDocumentMeta(page: PageKey | null) {
     setMeta('property', 'og:title', m.title);
     setMeta('property', 'og:description', m.description);
     setMeta('property', 'og:locale', locales[lang]);
+    setMeta('property', 'og:image', site.url + shareImage(page));
+    setMeta('name', 'twitter:title', m.title);
+    setMeta('name', 'twitter:description', m.description);
+    setMeta('name', 'twitter:image', site.url + shareImage(page));
 
     if (page) {
       const url = (l: typeof lang) => site.url + withLang(l, pages[page].path);
