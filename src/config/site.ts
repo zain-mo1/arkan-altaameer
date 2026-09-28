@@ -24,8 +24,8 @@ export const site = {
     phoneDisplay: '+966 50 292 7751',
     /** WhatsApp — international format, digits only (same line as calls) */
     whatsapp: '966502927751',
-    /** TODO: real e-mail */
-    email: 'info@example.com',
+    /** Contact e-mail — also the recipient of the forms' "send by e-mail" option */
+    email: 'bariaa19771@gmail.com',
     /** TODO (optional): working hours, e.g. { ar: 'الأحد – الخميس، ٨ ص – ٥ م', en: 'Sun – Thu, 8 am – 5 pm' } */
     hours: null as { ar: string; en: string } | null,
   },

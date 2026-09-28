@@ -206,7 +206,7 @@ Pre-rendering the pages (SSG) is a recommended next step to improve first paint 
 
 - [ ] Connect the company domain on Vercel and set it as `url` in `src/config/site.ts` (currently
       `https://arkan-altaameer.vercel.app`).
-- [ ] Add the company e-mail, social media profiles, office address and, optionally, working hours and a map embed.
+- [ ] Add the social media profiles, office address and, optionally, working hours and a map embed.
 - [ ] Replace the sample projects in `src/data/projects.ts` with the company's real projects and photography.
 - [ ] Replace the placeholder photography in `assets/photos/` and re-run `npm run media`.
 - [ ] Confirm the scope lists in `src/pages/services/content.ts` and `src/data/services.ts`.
